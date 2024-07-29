@@ -1,0 +1,7 @@
+aiohttp
+matplotlib
+flask
+numpy
+flask-swagger-ui
+PyYAML
+asyncio

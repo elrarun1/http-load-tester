@@ -1,0 +1,116 @@
+openapi: 3.0.0
+info:
+  title: HTTP Load Tester API
+  version: 1.0.0
+  description: API for a general-purpose HTTP load-testing and benchmarking library
+
+paths:
+  /run-test:
+    post:
+      summary: Run a load test
+      operationId: runTest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestConfig'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestResult'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    TestConfig:
+      type: object
+      required:
+        - url
+        - qps
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Target URL for the load test
+        qps:
+          type: integer
+          minimum: 1
+          description: Queries per second
+        duration:
+          type: integer
+          minimum: 1
+          default: 60
+          description: Test duration in seconds
+        method:
+          type: string
+          enum: [GET, POST, PUT, DELETE, PATCH]
+          default: GET
+          description: HTTP method to use
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom HTTP headers
+        data:
+          type: string
+          description: Request body data
+        concurrency:
+          type: integer
+          minimum: 1
+          default: 100
+          description: Maximum number of concurrent requests
+
+    TestResult:
+      type: object
+      properties:
+        total_requests:
+          type: integer
+          description: Total number of requests made
+        error_rate:
+          type: number
+          format: float
+          description: Error rate as a decimal (0.0 to 1.0)
+        avg_latency:
+          type: number
+          format: float
+          description: Average latency in milliseconds
+        median_latency:
+          type: number
+          format: float
+          description: Median latency in milliseconds
+        min_latency:
+          type: number
+          format: float
+          description: Minimum latency in milliseconds
+        max_latency:
+          type: number
+          format: float
+          description: Maximum latency in milliseconds
+        p95_latency:
+          type: number
+          format: float
+          description: 95th percentile latency in milliseconds
+        p99_latency:
+          type: number
+          format: float
+          description: 99th percentile latency in milliseconds
+        status_codes:
+          type: object
+          additionalProperties:
+            type: integer
+          description: Distribution of status codes
+        latency_distribution:
+          type: string
+          format: binary
+          description: PNG image of latency distribution histogram
+        status_code_distribution:
+          type: string
+          format: binary
+          description: PNG image of status code distribution bar chart
